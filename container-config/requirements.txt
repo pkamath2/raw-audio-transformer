@@ -1,0 +1,8 @@
+conda>=4.7.12
+conda-package-handling>=1.6.0
+librosa==0.8.0
+numpy>=1.18.1
+matplotlib==3.3.3
+SoundFile>=0.10.3.post1
+torch>=1.7
+tqdm>=4.38.0

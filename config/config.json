@@ -1,0 +1,15 @@
+{
+    "data_dir": "/home/purnima/appdir/Github/DATA/nsynth.64.76.dl",
+    "sample_rate": 16000,
+    "batch_size": 16,
+    "lr": 0.00005,
+    "lr_warmup": 15000,
+    "epochs": 100000,
+    "sample_length": 128,
+    "embedding_size": 256,
+    "num_heads": 8,
+    "depth": 4,
+    "num_tokens": 256,
+    "lower_pitch_limit": 64,
+    "upper_pitch_limit": 76
+}
