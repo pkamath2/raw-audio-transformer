@@ -1,5 +1,5 @@
 {
-    "data_dir": "/home/purnima/appdir/Github/DATA/nsynth.64.76.dl",
+    "data_dir": "/data/nsynth.64.76.dl",
     "sample_rate": 16000,
     "batch_size": 16,
     "lr": 0.00005,
