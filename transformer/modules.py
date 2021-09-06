@@ -28,6 +28,8 @@ from util.util import mask_
 
 import random, math, sys
 
+from fast_transformers.causal_product import CausalDotProduct
+
 class SelfAttention(nn.Module):
     """
     Canonical implementation of multi-head self attention.
@@ -69,13 +71,10 @@ class SelfAttention(nn.Module):
         keys    = self.tokeys(x)
         queries = self.toqueries(x)
         values  = self.tovalues(x)
-
+        
         keys    = keys.view(b, t, h, s)
         queries = queries.view(b, t, h, s)
         values  = values.view(b, t, h, s)
-
-        # -- We first compute the k/q/v's on the whole embedding vectors, and then split into the different heads.
-        #    See the following video for an explanation: https://youtu.be/KmAISyVvE1Y
 
         # Compute scaled dot-product self-attention
 
@@ -105,13 +104,13 @@ class SelfAttention(nn.Module):
 
         # swap h, t back, unify heads
         out = out.transpose(1, 2).contiguous().view(b, t, s * h)
-
+    
         return self.unifyheads(out)
 
 
 class TransformerBlock(nn.Module):
 
-    def __init__(self, emb, heads, mask, seq_length, ff_hidden_mult=4, dropout=0.0, attention_type='default', pos_embedding=None):
+    def __init__(self, emb, heads, mask, seq_length, ff_hidden_mult=4, dropout=0.0, pos_embedding=None):
         super().__init__()
 
         self.attention = SelfAttention(emb, heads=heads, mask=mask)
@@ -126,20 +125,21 @@ class TransformerBlock(nn.Module):
             nn.Linear(ff_hidden_mult * emb, emb)
         )
 
-        self.do = nn.Dropout(dropout)
+        self.do1 = nn.Dropout(dropout)
+        self.do2 = nn.Dropout(dropout)
 
     def forward(self, x):
 
         attended = self.attention(x)
 
+        attended = self.do1(attended)
+        
         x = self.norm1(attended + x)
-
-        x = self.do(x)
 
         fedforward = self.ff(x)
 
+        x = self.do2(x)
+        
         x = self.norm2(fedforward + x)
-
-        x = self.do(x)
-
+        
         return x

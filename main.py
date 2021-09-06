@@ -23,6 +23,7 @@ sample_rate = config['sample_rate']
 batch_size = config['batch_size']
 lr = config['lr']
 lr_warmup = config['lr_warmup']
+dropout = config['dropout']
 epochs = config['epochs']
 
 sample_length = config['sample_length']
@@ -33,6 +34,7 @@ num_tokens = config['num_tokens']
 
 lower_pitch_limit = config['lower_pitch_limit']
 upper_pitch_limit = config['upper_pitch_limit']
+checkpoint_location = config['checkpoint_location']
 
 print(config)
 
@@ -42,7 +44,7 @@ train_loader = torch.utils.data.DataLoader(train_ds, batch_size=batch_size, shuf
 test_ds = NSynthDataSet(data_dir=data_dir, sr=sample_rate, sample_length=sample_length, split='test')
 test_loader = torch.utils.data.DataLoader(test_ds, batch_size=batch_size, shuffle=True)
 
-model = GTransformer(emb=embedding_size, heads=num_heads, depth=depth, seq_length=sample_length, num_tokens=num_tokens, attention_type=None)
+model = GTransformer(emb=embedding_size, heads=num_heads, depth=depth, seq_length=sample_length, num_tokens=num_tokens, dropout=dropout)
 model = model.cuda()
 
 opt = torch.optim.Adam(lr=lr, params=model.parameters())
@@ -99,7 +101,7 @@ for epoch in range(0, epochs, 1):
     train_loss = train()
     history_train['loss'].append(train_loss)
     
-    if epoch%500 == 0 or epoch == epochs-1:
+    if epoch%1000 == 0 or epoch == epochs-1:
         test_loss = test()
         history_test['loss'].append(test_loss)
         
@@ -114,11 +116,11 @@ for epoch in range(0, epochs, 1):
         axes[1].set_xlabel('epoch')
         axes[1].set_ylabel('loss')
         
-        plt.savefig(f'checkpoint/plots/{epoch}.png')
+        plt.savefig(f'{checkpoint_location}/plots/{epoch}.png')
         
         plt.close(fig)
 
-        util.save_model(epoch, model, opt, train_loss, f'checkpoint/models/{epoch}.pt')
+        util.save_model(epoch, model, opt, train_loss, f'{checkpoint_location}/models/{epoch}.pt')
 
 
 

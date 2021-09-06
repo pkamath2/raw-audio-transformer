@@ -30,7 +30,7 @@ class GTransformer(nn.Module):
     """
     Transformer for generating audio.
     """
-    def __init__(self, emb, heads, depth, seq_length, num_tokens, attention_type='default'):
+    def __init__(self, emb, heads, depth, seq_length, num_tokens, dropout=0.0):
         super().__init__()
     
         self.seq_length = seq_length
@@ -49,7 +49,7 @@ class GTransformer(nn.Module):
         tblocks = []
         for i in range(depth):
             tblocks.append(
-                TransformerBlock(emb=emb, heads=heads, seq_length=seq_length, mask=True, attention_type=attention_type, pos_embedding=self.pos_embedding))
+                TransformerBlock(emb=emb, heads=heads, seq_length=seq_length, mask=True, pos_embedding=self.pos_embedding, dropout=dropout))
 
         self.tblocks = nn.Sequential(*tblocks)
 
@@ -73,6 +73,8 @@ class GTransformer(nn.Module):
         positions = self.pos_embedding_activation(positions)
         
         x = tokens + positions #+ conditioning # Output from 'Word' + 'Position' embedding = batch_size X sample_length X embedding_size i.e. 16 X 512 X 128 
+        
+        x = self.do(x)
         
         x = self.tblocks(x) # batch_size X sample_length X embedding_size i.e. 16 X 512 X 128
 

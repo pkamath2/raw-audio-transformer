@@ -35,15 +35,6 @@ def get_scaled_pitch(pitch):
     return (pitch - lower_pitch_limit)/(upper_pitch_limit - lower_pitch_limit)
 
 def mask_(matrices, maskval=0.0, mask_diagonal=True):
-    """
-    Masks out all values in the given batch of matrices where i <= j holds,
-    i < j if mask_diagonal is false
-
-    In place operation
-
-    :param tns:
-    :return:
-    """
 
     h, w = matrices.size(-2), matrices.size(-1)
 
