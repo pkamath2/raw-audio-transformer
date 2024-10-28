@@ -1,4 +1,4 @@
-# Raw Audio Transformer
+# Raw Audio Transformer  
 
 We propose an architecture for an autoregressive transformer for raw audio synthesis. We condition this synthesis on pitch, instrument and amplitude scale per sample of the raw audio data using floating point values. Our primary aim is to be able to synthesize raw audio samples interpolating continuously either on pitch, amplitude or instrument. 
 
